@@ -1,0 +1,6 @@
+{
+  "name": "Quran Sunao",
+  "description": "Your daily Qur'an recitation, attendance, lesson tracking, and student management, kept simple.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
