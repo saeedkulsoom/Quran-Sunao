@@ -27,12 +27,18 @@ jobs:
 
       - name: Ensure Gradle Wrapper & Config Exists
         run: |
-          if [ ! -f "./gradlew" ]; then
-            echo "Generating Gradle wrapper files automatically..."
+          if [ ! -f "./gradlew" ] || ! head -1 "./gradlew" | grep -q "#!/"; then
+            echo "Gradle wrapper missing or corrupted. Regenerating..."
+            rm -f gradlew gradlew.bat
             mkdir -p gradle/wrapper
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar || true
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew -o gradlew || true
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew.bat -o gradlew.bat || true
+            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
+            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew -o gradlew
+            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew.bat -o gradlew.bat
+            
+            if ! head -1 "./gradlew" | grep -q "#!/"; then
+              echo "Failed to download gradlew. Check repository state."
+              exit 1
+            fi
           fi
           chmod +x gradlew
 
