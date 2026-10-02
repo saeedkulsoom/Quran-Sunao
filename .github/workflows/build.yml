@@ -28,15 +28,18 @@ jobs:
       - name: Ensure Gradle Wrapper & Config Exists
         run: |
           if [ ! -f "./gradlew" ] || ! head -1 "./gradlew" | grep -q "#!/"; then
-            echo "Gradle wrapper missing or corrupted. Regenerating..."
+            echo "Gradle wrapper missing or corrupted. Regenerating via official distribution..."
             rm -f gradlew gradlew.bat
             mkdir -p gradle/wrapper
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradle/wrapper/gradle-wrapper.jar -o gradle/wrapper/gradle-wrapper.jar
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew -o gradlew
-            curl -sSL https://raw.githubusercontent.com/gradle/gradle/v8.5/gradlew.bat -o gradlew.bat
+            
+            # Download and extract Gradle 8.5 to generate wrapper scripts cleanly
+            curl -sSL https://services.gradle.org/distributions/gradle-8.5-bin.zip -o gradle-8.5-bin.zip
+            unzip -q gradle-8.5-bin.zip
+            ./gradle-8.5/bin/gradle wrapper --gradle-version 8.5
+            rm -rf gradle-8.5 gradle-8.5-bin.zip
             
             if ! head -1 "./gradlew" | grep -q "#!/"; then
-              echo "Failed to download gradlew. Check repository state."
+              echo "Failed to generate gradlew successfully."
               exit 1
             fi
           fi
